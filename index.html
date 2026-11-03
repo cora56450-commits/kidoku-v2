@@ -2928,12 +2928,12 @@ function roomPanel(){
 }
 function roomInstruction(tx){
  var text='\n私人房间只能通过程序节点进入，没有节点时不得把女主带进任何男主的房间。';if(!tx||tx.mode==='line')return text;var n=ROOM_BY_ID[tx.eventId];if(!n||(tx.kind!=='roomBeat'&&tx.kind!=='roomFinal'))return text;var s=G.runtime.roomNodes[n.id];
- text+='\n【私人房间节点「'+n.title+'」】女主穿便服。必须写到下面的关键情节，具体文字按玩家存档和记忆写。不替玩家说台词或做决定。数值由程序结算，本轮不要输出<fav>'+(tx.kind==='roomFinal'?'':'和<suggested_questions>')+'。<bg>只用 '+tx.background+'。\n';
+ text+='\n【私人房间节点「'+n.title+'」】女主穿便服。必须写到下面的关键情节，具体文字按玩家存档和记忆写。不替玩家说台词或做决定。数值由程序结算，本轮不要输出<fav>和<suggested_questions>。<bg>只用 '+tx.background+'。\n';
  if(tx.kind==='roomBeat')return text+(tx.roomBeat==='open'?n.open:n.enter)+(s.note?'\n玩家的选择：'+s.note:'');
- var c=n.choices[s.choice];return text+'玩家选择了：'+c.label+'。'+c.note+'\n'+n.ending+'\n写完后本节点结束：除非玩家明确说要过夜，否则必须写明这边的事结束、user离开他家'+(n.period==='afternoon'?'，写到她离开即可，不要写回到公寓，傍晚可能还有打工。':'并返回自己的公寓。');
+ var c=n.choices[s.choice];return text+'玩家选择了：'+c.label+'。'+c.note+'\n'+n.ending+'\n写完后本节点结束：除非玩家明确说要过夜，否则必须写明这边的事结束、user离开他家'+(n.period==='afternoon'?'，结尾写明她已经走出他家，不要写回到公寓，傍晚可能还有打工。':'并返回自己的公寓。');
 }
 var roomPrepare=prepareWorldAction;prepareWorldAction=function(intent,input){roomSchedule();var a=roomActive();if(a&&intent?.mode!=='line'&&intent?.kind!=='roomBeat'&&intent?.kind!=='roomFinal')throw new Error('请先完成当前节点的选择。');return roomPrepare(intent,input)};
-var roomFinish=finishWorldAction;finishWorldAction=function(R,tx,input,raw,before){var result=roomFinish(R,tx,input,raw,before),n=ROOM_BY_ID[tx?.eventId];if(!n||(tx.kind!=='roomBeat'&&tx.kind!=='roomFinal'))return result;var r=G.runtime,s=r.roomNodes[n.id];if(before)G.stats=clone(before);if(tx.kind==='roomBeat'){s.stage=tx.roomBeat==='enter'&&n.openRoom?'key':'choice';return result}var d=n.choices[s.choice].d,st=G.stats[n.k];Object.keys(d).forEach(function(k){st[k]=Math.max(0,Math.min(100,st[k]+d[k]))});s.stage='done';if(r.day===tx.day)r.location='apartment';r.revision++;if(typeof recordGameFact==='function')recordGameFact(n.choices[s.choice].note);return result};
+var roomFinish=finishWorldAction;finishWorldAction=function(R,tx,input,raw,before){var result=roomFinish(R,tx,input,raw,before),n=ROOM_BY_ID[tx?.eventId];if(!n||(tx.kind!=='roomBeat'&&tx.kind!=='roomFinal'))return result;var r=G.runtime,s=r.roomNodes[n.id];if(before)G.stats=clone(before);if(tx.kind==='roomBeat'){s.stage=tx.roomBeat==='enter'&&n.openRoom?'key':'choice';return result}var d=n.choices[s.choice].d,st=G.stats[n.k];Object.keys(d).forEach(function(k){st[k]=Math.max(0,Math.min(100,st[k]+d[k]))});s.stage='done';G.opts=[];if(r.day===tx.day)r.location='apartment';r.revision++;if(typeof recordGameFact==='function')recordGameFact(n.choices[s.choice].note);return result};
 var roomShowChoice=showChoice;showChoice=function(){roomSchedule();var result=roomShowChoice();roomPanel();return result};
 
 // ---------- after stories: scripted, no API, no save ----------

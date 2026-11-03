@@ -213,8 +213,12 @@ body{background:#eedee8 var(--a-tile_gingham) center/300px}
 #stage #phoneClose{inset:auto;left:auto;right:calc(100% + var(--phone-close-gap));top:auto;bottom:calc(18px * var(--text-boost,1));width:var(--phone-close-width);height:var(--phone-hit);min-width:var(--phone-hit)!important;min-height:var(--phone-hit)!important;z-index:5;padding:0;background:transparent;border:0;font-size:calc(13px * var(--text-boost,1));isolation:isolate}
 #stage #phoneDrawer #homeBtn{left:50%;top:var(--phone-home-top);bottom:auto;transform:translateX(-50%);width:var(--phone-home-hit-width);height:var(--phone-home-hit-height);min-width:var(--phone-hit)!important;min-height:var(--phone-hit)!important;z-index:4;padding:0;background-color:transparent;background-image:var(--a-ph_home);background-repeat:no-repeat;background-size:var(--phone-home-size) var(--phone-home-size);background-position:center var(--phone-home-offset);touch-action:manipulation}
 
-/* On short screens the single title column cannot fit eight 44px buttons, so the menu becomes two rows along the bottom. */
-#stage[data-short-title=true] #v-title .t-menu{left:calc(12px * var(--text-boost,1));right:calc(12px * var(--text-boost,1));top:auto;bottom:calc(20px * var(--text-boost,1));width:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:calc(3px * var(--text-boost,1))}
+/* The faces sit in the upper half of the title art, so the logo stays small in the corner and the menu runs along the bottom. */
+#stage #v-title .t-logo{left:2.5%;top:3%;width:36%;filter:drop-shadow(0 0 5px rgba(255,255,255,.8))}
+#stage #v-title .t-menu{left:calc(24px * var(--text-boost,1));right:calc(24px * var(--text-boost,1));top:auto;bottom:calc(26px * var(--text-boost,1));width:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:calc(6px * var(--text-boost,1)) calc(10px * var(--text-boost,1))}
+#stage #v-title .t-menu button,#stage #v-title #tOP{font-size:calc(15px * var(--text-boost,1))}
+#stage[data-short-title=true] #v-title .t-menu{left:calc(12px * var(--text-boost,1));right:calc(12px * var(--text-boost,1));bottom:calc(20px * var(--text-boost,1));gap:calc(3px * var(--text-boost,1))}
+#stage[data-short-title=true] #v-title .t-menu button,#stage[data-short-title=true] #v-title #tOP{font-size:calc(13px * var(--text-boost,1))}
 #stage[data-short-title=true] #v-title .t-menu .frame-label b{flex-direction:column;gap:0;line-height:1.1}
 #stage[data-short-title=true] #v-title .t-menu .frame-label small{line-height:1.1}
 /* Keep the composer inside the phone's rounded safe area: quota and stamps above, input and send below. */

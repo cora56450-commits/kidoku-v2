@@ -276,6 +276,19 @@ body{background:#eedee8 var(--a-tile_gingham) center/300px}
 .comic-open span{position:absolute;left:0;right:0;bottom:6px;color:#fff;text-shadow:0 1px 3px #302537;font-size:calc(13px * var(--text-boost,1))}
 .char-archive{margin-top:calc(10px * var(--text-boost,1))}.char-archive h4{margin:0 0 calc(4px * var(--text-boost,1));font-size:calc(14px * var(--text-boost,1));color:#4a3340}.char-archive h4 small{margin-left:8px;font-weight:400;font-size:calc(11px * var(--text-boost,1));color:#7a5a6c}
 .char-archive p{margin:0;padding:calc(2px * var(--text-boost,1)) 0;font-size:calc(13px * var(--text-boost,1));color:#4a3340}.char-archive p.locked{color:#a895a3}
+/* The journal card keeps its frame corners but gives the middle to the text. */
+#stage #dayTransitionOverlay .panel{width:1200px;height:690px;padding:calc(24px + 3.2%) 8.5% 3.6%}
+#stage #dayTransitionOverlay .day-calendar-card{width:1040px}
+#stage .day-journal-header{display:flex;align-items:baseline;gap:calc(12px * var(--text-boost,1));padding-bottom:calc(6px * var(--text-boost,1))}
+#stage .day-journal-header h2{font-size:max(30px,calc(19px * var(--text-boost,1)))}#stage .day-journal-header p{margin:0;font-size:max(18px,calc(12px * var(--text-boost,1)))}
+#stage .day-journal-columns{grid-template-columns:27% minmax(0,1fr);gap:calc(14px * var(--text-boost,1));padding:calc(8px * var(--text-boost,1)) 0 calc(4px * var(--text-boost,1))}
+#stage .day-recap{padding-right:calc(8px * var(--text-boost,1))}
+#stage .day-recap h3,#stage .day-diary h3{font-size:max(22px,calc(14px * var(--text-boost,1)));margin:0 0 calc(3px * var(--text-boost,1))}
+#stage .day-recap dt{font-size:max(16px,calc(11px * var(--text-boost,1)));margin:calc(4px * var(--text-boost,1)) 0 0}#stage .day-recap dd{font-size:max(19px,calc(13px * var(--text-boost,1)));margin:0 0 calc(3px * var(--text-boost,1))}
+#stage #dayJournalStatus{display:none}
+#stage #dayJournalText{font-size:max(23px,calc(15px * var(--text-boost,1)));line-height:1.6;padding:0 calc(4px * var(--text-boost,1)) 0 0}
+#stage #dayTransitionOverlay footer{padding-top:calc(4px * var(--text-boost,1))}
+#stage #dayTransitionOverlay footer .btn{width:max(230px,calc(110px * var(--text-boost,1)));height:max(52px,var(--polish-hit,44px))}
 </style></head><body>
 <div id="gameViewport"><main id="stage"><p id="portraitHint">横过来体验更好</p>
 <div class="sb"><span>docomo 4G</span><span id="sbDate">2018</span><span>▮▮▮ 12%</span></div>
@@ -1564,6 +1577,7 @@ function minaStage(tx){var ev=G?.runtime?.events||{},node=ev.mina_secret_day4,co
 var MINA_BEFORE_WB='【藤代湊·当前阶段（第4日请求保密节点之前）】\n- 藤代湊，20岁，聖蘭学院大学法学部二年级，和user同上法语课，座位相邻。身高176cm，偏瘦，坐姿笔直。\n- 外貌：整齐的纯黑短发，刘海齐眉，两侧利落；五官清秀偏冷，眼尾微微上挑，深蓝灰色瞳孔，戴黑色细框长方形眼镜；表情很少，嘴唇薄。\n- 衣着：浅灰针织毛衣套白衬衫，黑色西裤，敞开的深藏青长大衣，黑皮鞋；肩上一个帆布托特包。\n- 在学校：冷淡寡言，礼貌但疏远，被搭话时只回一两个字；上课坐最角落，课间戴耳机，午饭永远是同一款便当。\n- 说话方式：短句，句号多，"……"很多。\n- 和user：同上法语课的同学，半年来说过的话不超过十句；小组作业时加过LINE，之后再没聊过。他对user的印象只是"穿得很粉、很吵，但作业做得很认真的人"。',MINA_SEEN_WB='\n- 第3日已发生：他是女性向音游『星屑アンサンブル』的玩家（这件事他从不让人知道），为了联动杯垫来店时被在店里打工的user撞见。他现在戒备、回避，怕被说出去；他还没有开口请求保密，和user没有任何默契，也没有"松了一口气"。';
 function nodeVisible(n,tx){var day=G?.runtime?.day||0;if(n<day)return true;if(n>day)return false;return TC.events.some(function(e){var s=G.runtime.events?.[e.id];return e.day===n&&(e.id===tx?.eventId||s?.completed||s?.presented||s?.declined)})}
 function gateWB(entries,tx){var stage=minaStage(tx),minaDone=false,out=[];entries.forEach(function(e){var v=e.v||'';if(/^【藤代湊·/.test(v)){if(stage!=='after'){if(!minaDone){minaDone=true;out.push(Object.assign({},e,{v:MINA_BEFORE_WB+(stage==='seen'?MINA_SEEN_WB:'')}))}return}out.push(e);return}if(/^【共通线节点】|^【CG节点表】|^【个人线节点】/.test(v))v=v.split('\n').filter(function(line){var m=line.match(/^(?:\s*[-·]\s*|\|\s*CG\d+\s*\|.*?\|\s*)第(\d+)日/);return !m||nodeVisible(+m[1],tx)}).join('\n');if(stage!=='after'){if(/^【手机与LINE】/.test(v))v=v.replace('「……今日のこと、内緒にしてください。（……今天的事，请替我保密。）」','');if(/^【星屑アンサンブル与联动】/.test(v))v=v.split('\n').filter(function(line){return !/^- 剧情用法：/.test(line)}).join('\n');if(/^【交叉旧事】/.test(v))v=v.split('\n').filter(function(line){return !(/湊/.test(line)&&/常客|杯垫/.test(line))}).join('\n')}out.push(v===e.v?e:Object.assign({},e,{v:v}))});return out}
+function isLastAction(tx){return !!tx&&tx.mode!=='line'&&tx.mode!=='event'&&tx.period==='night'&&tx.day<61}
 function nodeStatusPrompt(tx){if(!G?.runtime)return '';var day=G.runtime.day,ev=G.runtime.events||{},now=tx?.eventId,done=[],todo=[],current='';TC.events.forEach(function(e){var s=ev[e.id],label='第'+e.day+'日'+e.title;if(e.id===now){current=label;return}if(e.id==='opening_day1'||s&&(s.completed||s.presented||s.declined))done.push(label);else if(e.day>=day&&e.day<=day+7)todo.push(label)});return '\n【当前状态·全局节点】已发生的节点：'+(done.join('；')||'无')+'。'+(current?'本轮正在发生的节点：'+current+'。':'')+'尚未发生的节点（近7天）：'+(todo.join('；')||'无')+'。\n硬规则：尚未发生的节点，任何人都不得在正文、LINE、推特里提到、暗示或感谢；角色只知道已经发生的事。'}
 function pickWB(scan,tx){
   var out=[];
@@ -1741,7 +1755,7 @@ function send(input,isRetry,intent){
   var w=$('gWait');w.classList.remove('hide');$('gProg').textContent='正在生成';
   var requestBase=clone(G),snap=snapshot(),statsBefore=clone(G.stats);var useDemo=!CFG.key;requestAnimationFrame(applyFrames);
   lineOptimistic(tx);
-  var p=useDemo?worldDemoReply(tx,input):callAI(buildMessages(input,tx),function(n,think){$('gProg').textContent=think?'正在思考……':'已收到 '+n+' 字'}).then(function(raw){return lineSyncRaw(raw,tx)});
+  var p=useDemo?worldDemoReply(tx,input):callAI(buildMessages(input,tx),function(n,think){$('gProg').textContent=think?'正在思考……':'已收到 '+n+' 字'},isLastAction(tx)?Object.assign({},CFG,{max:Math.max(+CFG.max||4000,6000)}):undefined).then(function(raw){return lineSyncRaw(raw,tx)});
   p.then(function(raw){
     w.classList.add('hide');setPending(false);retrySource=null;
     var R=parseReply(raw);worldValidateReply(R,tx,raw);
@@ -2040,7 +2054,7 @@ function worldInstruction(tx){if(!G)return '';var c=tx||worldContext(),r=G.runti
  if(tx?.relationship)text+='\n玩家明确的关系选择：'+JSON.stringify(tx.relationship)+'。按该选择演出，不扩大这次同意的范围。';
  text+='\n【完整v2背景名单，以此为准，覆盖旧后置词八场景限制】'+Object.keys(SCENE_CONFIG.locations).map(function(id){var l=SCENE_CONFIG.locations[id];return l.label+'（'+l.aliases.join('／')+'）→'+l.background}).join('；')+'。每页前可用名称或素材key；私人房间/柜子只在程序已实际授权进入时有效，江之岛仅对应已接受节点。';
  text+='\n可用新场景标签：'+c.background+'。店内允许后台/后厨内部演出；其余不得瞬移。数字仅提出好感/信任/专属值变化，每项单次最多±15；<save>不得改程序账本。若本轮NPC本人实际邀请且门槛允许，可附<invite>noaRoom|kuzeRoom|minaRoom|minaCabinet中的一个ID</invite>（每条只一个ID）。NPC本人真实提出告白/亲吻才附<proposal>noa或kuze或mina|confession或kiss</proposal>，不能把标签当玩家同意。';
- text+='\n场景变化必须在对应页前输出<bg>，同轮室内走到室外也必须输出；每轮至少一次<face>，明显变化时逐页再标，未标保持原表情。bg/face均从该页起持续生效。只使用现有合法场景，不越权进入私宅。';if(tx?.course)text+='\n本轮明确上'+(tx.courseLabel||'法语课')+'，不能变成自由外出。';if(typeof lineInstruction==='function')text+=lineInstruction(tx);if(typeof economyInstruction==='function')text+=economyInstruction(tx);if(window.CharacterStoryUI)text+=CharacterStoryUI.instruction(G);
+ text+='\n场景变化必须在对应页前输出<bg>，同轮室内走到室外也必须输出；每轮至少一次<face>，明显变化时逐页再标，未标保持原表情。bg/face均从该页起持续生效。只使用现有合法场景，不越权进入私宅。';if(tx?.course)text+='\n本轮明确上'+(tx.courseLabel||'法语课')+'，不能变成自由外出。';if(isLastAction(tx))text+='\n【今日最后一个时段】这是今天最后一次行动，本轮结束后直接进入第'+(c.day+1)+'日上午。本轮比平时多写一些（全轮18~26页），把眼下正在进行的事写到真正结束：事情办完、话说完、和在场的人告别，最后写到user回到住处，准备休息或玩手机；不留未完成的场景或悬在半空的动作。收尾不替玩家说台词、不替她答应任何事。本轮不要输出<suggested_questions>，改用<morning_options>写1到3条第二天早上起床后可以做的事（每行“序号. 内容”），不得延续今晚的场景。';else if(tx?.mode!=='line'&&c.period==='morning'&&c.day>1)text+='\n【新的一天】昨晚的事已经结束，当时在场的人都已各自离开。本轮从第'+c.day+'日上午重新开始，昨天只能当回忆提起，不接着写昨晚的场景、动作或对话。';if(typeof lineInstruction==='function')text+=lineInstruction(tx);if(typeof economyInstruction==='function')text+=economyInstruction(tx);if(window.CharacterStoryUI)text+=CharacterStoryUI.instruction(G);
  return text;
 }
 function worldValidateReply(R,tx,raw){
@@ -2424,7 +2438,7 @@ var dayAfterCommit,dayRestore,dayIsPending,dayDisplayContext,dayCheckLastPeriod;
  function diaryUpdate(){
   if(!current()){stopView();return}if(session.phase!=='diary')return;
   var entry=summaryEngine.diaryForDay(G,session.transition.day),text=entry?.text||'正在写日记…',node=$('dayJournalText');
-  if(node&&node.textContent!==text)node.textContent=text;
+  text=String(text).replace(/［(?:スタンプ|贴图)[：:][^］]+］/g,function(token){var st=C.sticker(token);return st?.meaning?'【*表情·'+st.meaning+'】':token});if(node&&node.textContent!==text)node.textContent=text;
   var status=$('dayJournalStatus');if(status)status.textContent=entry?(entry.fallback?'已保留事实记录':'今天的日记'):'你可以先合上，写好后会保存在手帐里。';
  }
  function recap(summary){
@@ -2560,7 +2574,7 @@ var polishFrameBase=frame,polishLayoutFrameBase=layoutFrame,polishApplyFramesBas
 var polishShowBase=show,polishRenderCharBase=renderChar,polishRenderExtraBase=renderExtra;
 var polishRenderStatusBase=typeof renderStatusTokens==='function'?renderStatusTokens:null;
 function polishPanelInset(el){
- if(!el||!el.matches('.panel')||el.closest('#phoneScreen')||el.classList.contains('rotate-panel'))return;
+ if(!el||!el.matches('.panel')||el.closest('#phoneScreen')||el.classList.contains('rotate-panel')||el.closest('#dayTransitionOverlay'))return;
  var art=el.querySelector(':scope > .frame-art'),meta=META[el.dataset.frame];if(!art||!meta||!meta.nineSlice)return;
  var stage=$('stage'),scale=parseFloat(stage.style.getPropertyValue('--game-scale'))||1,n=meta.nineSlice;
  var sourceScale=Math.min(1,el.clientWidth/meta.width,el.clientHeight/meta.height),computed=getComputedStyle(art),extra=24/scale;
@@ -2812,7 +2826,7 @@ function endingEvaluate(g){var s=g.stats,r=g.route||'',k=g.runtime?.route||(/ノ
 var ARCHIVE={noa:[{id:'noa_facility',title:'设施长大',test:function(g){return evDone(g,'noa_convenience_day33')&&g.stats.noa.f>=55&&g.stats.noa.t>=45}},{id:'noa_boat',title:'纸船与名字',test:function(g){return evDone(g,'noa_planetarium_day45')&&g.stats.noa.f>=70&&g.stats.noa.t>=60}},{id:'noa_wrist',title:'护腕线索',test:function(g){return evDone(g,'noa_planetarium_day45')&&g.stats.noa.f>=70&&g.stats.noa.t>=60}},{id:'noa_announce',title:'重要发表',test:function(g){return evDone(g,'noa_announcement_day40')}}],kuze:[{id:'kuze_pastry',title:'学过甜点',test:function(g){return evDone(g,'kuze_kitchen_day33')&&g.stats.kuze.f>=55&&g.stats.kuze.t>=45}},{id:'kuze_paris',title:'巴黎与父亲的店',test:function(g){return evDone(g,'kuze_enoshima_day48')&&g.stats.kuze.f>=70&&g.stats.kuze.s>=55}},{id:'kuze_kobe',title:'神户邀请',test:function(g){return evDone(g,'kuze_enoshima_day48')&&g.stats.kuze.f>=70&&g.stats.kuze.s>=55}},{id:'kuze_rule',title:'店规第四条',test:function(g,input){return /第四条|店规.{0,4}四/.test(input||'')}}],mina:[{id:'mina_love',title:'从小的喜好',test:function(g){return evDone(g,'mina_otome_day33')&&g.stats.mina.f>=55&&g.stats.mina.t>=45}},{id:'mina_father',title:'父亲与春天',test:function(g){return evDone(g,'mina_library_day50')&&g.stats.mina.f>=70&&g.stats.mina.s>=55}},{id:'mina_fanfic',title:'同人账号',test:function(g,input){return evDone(g,'mina_library_day50')&&g.stats.mina.f>=70&&g.stats.mina.s>=55&&/同人|另一个.{0,4}账号|小号/.test(input||'')}},{id:'mina_cabinet',title:'柜中收藏',test:function(g){return !!g.runtime?.privateVisits?.minaCabinet}}]};
 function evDone(g,id){return !!g.runtime?.events?.[id]?.completed}
 function archiveUpdate(g,input){if(!g?.runtime)return;g.archive||=[];var changed=false;GK.forEach(function(k){ARCHIVE[k].forEach(function(a){if(!g.archive.includes(a.id)&&a.test(g,input))g.archive.push(a.id);if(g.archive.includes(a.id)&&!archiveSeen.includes(a.id)){archiveSeen.push(a.id);changed=true}})});if(changed)lsSet('kidoku.archive',archiveSeen)}
-var step7Finish=finishWorldAction;finishWorldAction=function(R,tx,input,raw,before){var result=step7Finish(R,tx,input,raw,before);if(G?.runtime){if(G.runtime.day>=51&&!G.statsDay51)G.statsDay51=clone(G.stats);archiveUpdate(G,tx?.mode==='main'||tx?.mode==='line'?input:'')}return result};
+var step7Finish=finishWorldAction;finishWorldAction=function(R,tx,input,raw,before){var result=step7Finish(R,tx,input,raw,before);if(G?.runtime){if(G.runtime.day>tx.day){var morning=String(raw||'').match(/<morning_options>([\s\S]*?)<\/morning_options>/);G.opts=morning?morning[1].split('\n').map(function(l){var m=l.match(/^\s*\d+\s*[.、．)）]\s*(.+?)\s*$/);return m&&m[1]}).filter(Boolean).slice(0,4):[]}if(G.runtime.day>=51&&!G.statsDay51)G.statsDay51=clone(G.stats);archiveUpdate(G,tx?.mode==='main'||tx?.mode==='line'?input:'')}return result};
 var step7DayCommit=dayAfterCommit;dayAfterCommit=function(tx,result){if(G?.runtime?.ended)return;return step7DayCommit(tx,result)};
 var endSession=null;
 function endingUnlock(e){G.ending={id:e.id,at:Date.now(),stats:clone(G.stats)};if(G.cgs.indexOf(e.cg)<0)G.cgs.push(e.cg);if(CGS.indexOf(e.cg)<0)CGS.push(e.cg);lsSet('kidoku.cg',CGS);if(!endingsSeen.includes(e.id)){endingsSeen.push(e.id);lsSet('kidoku.endings',endingsSeen)}}

@@ -223,6 +223,14 @@ body{background:#eedee8 var(--a-tile_gingham) center/300px}
 #stage #phoneScreen #lineStamps{grid-column:2;grid-row:1;width:var(--phone-hit);height:var(--phone-hit)}
 #stage #phoneScreen #lineInput{grid-column:1;grid-row:2}
 #stage #phoneScreen #lineSend{grid-column:2;grid-row:2;white-space:nowrap}
+/* Text that inherits the page's base size must also follow --text-boost, or it shrinks with the stage on phones. */
+#stage #v-settings,#stage #v-config,#stage #v-slots,#stage #v-inventory{font-size:max(16px,calc(13px * var(--text-boost,1)))}
+#stage #twBody{font-size:max(16px,calc(12px * var(--text-boost,1)))}
+#stage .tw-default-avatar{width:max(36px,calc(24px * var(--text-boost,1)));height:max(36px,calc(24px * var(--text-boost,1)));font-size:max(18px,calc(13px * var(--text-boost,1)))}
+#stage #inventoryBalance{font-size:max(20px,calc(15px * var(--text-boost,1)))}
+#stage .m-top{font-size:calc(12px * var(--text-boost,1))!important}
+#stage input[type=radio],#stage input[type=checkbox]{width:max(20px,calc(18px * var(--text-boost,1)));height:max(20px,calc(18px * var(--text-boost,1)));flex:none}
+#stage input[type=range]{height:max(20px,calc(28px * var(--text-boost,1)))}
 </style></head><body>
 <div id="gameViewport"><main id="stage"><p id="portraitHint">横过来体验更好</p>
 <div class="sb"><span>docomo 4G</span><span id="sbDate">2018</span><span>▮▮▮ 12%</span></div>
